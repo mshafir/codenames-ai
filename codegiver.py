@@ -1,3 +1,5 @@
+import numpy as np
+from tqdm import tqdm
 from scipy.spatial import distance
 
 
@@ -5,11 +7,33 @@ from scipy.spatial import distance
 SIMILARITY_THRESHOLD = 10
 
 
+def legal_word(w, words):
+    if w in words:
+        return False
+    for w2 in words:
+        if w in w2 or w2 in w:
+            return False
+    return True
+
+
 class CodeGiverHuman:
     def give_hint(self, board):
         clue = raw_input('What is your clue?\n > ')
         num = raw_input('How many words is your clue for? \n > ')
         return clue, int(num)
+
+
+class Hint:
+    def __init__(self, word, num=0, similarity=0., distinctness=0., intended=None):
+        self.word = word
+        self.num = num
+        self.similarity = similarity
+        self.distinctness = distinctness
+        self.intended = intended
+
+    def __str__(self):
+        return "%s for %i (similarity: %f, distinctness: %f, intended: %s)" % \
+              (self.word, self.num, self.similarity, self.distinctness, ', '.join(self.intended))
 
 
 class CodeGiverAI:
@@ -20,16 +44,23 @@ class CodeGiverAI:
         self.debug = debug
 
     def give_hint(self, board):
-        scores = self.score_words(board)
-        best_score = scores[0]
+        print 'thinking...'
+        hints = self.score_hints(board)
+        best_hint = hints[0]
         if self.debug:
-            print 'distinctness: '+str(best_score[1][1])
-            print 'intending: ' + ', '.join(str(best_score[1][2]))
-        return best_score[0], best_score[1][0]
+            print best_hint
+        return best_hint.word, best_hint.num
 
-    def score_words(self, board):
-        scores = [self.score_word(w, board) for w in self.words if w not in board.words]
-        return sorted(scores, key=lambda w:w[1][1], reverse=True)
+    def evaluate_hint(self, hint):
+        if hint.num == 1:
+            return 1
+        else:
+            return (SIMILARITY_THRESHOLD - hint.similarity) + hint.distinctness + hint.num * 0.2
+
+    def score_hints(self, board):
+        hints = [self.score_word(w, board) for w in tqdm(self.words) if legal_word(w, board.words)]
+        hints = [hint for hint in hints if hint.num > 0]
+        return sorted(hints, key=self.evaluate_hint, reverse=True)
 
     def score_word(self, word, board):
         similarity = sorted(self.board_similarity(word, board), key=lambda w: w[2])
@@ -48,11 +79,11 @@ class CodeGiverAI:
         # number of guessable words
         guessable_words = [w for w in team_words if w[1] < SIMILARITY_THRESHOLD]
         if len(guessable_words) == 0 or first_non_team_word is None:
-            return word, (0, 0, [])
+            return Hint(word, 0, 0, 0, [])
 
         # the number to give and how distinct the clue is from other words on the board
         num = len(guessable_words)
-        distinctness = guessable_words[-1][1] - first_non_team_word[1]
+        distinctness = first_non_team_word[1] - guessable_words[-1][1]
 
         # penalty to distinctness depending on type
         if first_non_team_type == 'assassin':
@@ -60,11 +91,12 @@ class CodeGiverAI:
         elif first_non_team_type != 'neutral':
             distinctness -= 0.1
 
-        return word, (num, distinctness, [t[0] + ' (' + str(t[1]) + ')' for t in guessable_words])
+        similarity = np.mean([w[1] for w in guessable_words])
+
+        return Hint(word, num, similarity, distinctness, [t[0] + ' (' + str(t[1]) + ')' for t in guessable_words])
 
     def board_similarity(self, word, board):
         return [(w, board.word_type(w), self.word_similarity(word, w)) for w in board.remaining_words()]
 
     def word_similarity(self, word1, word2):
         return distance.euclidean(self.vectors[word1], self.vectors[word2])
-

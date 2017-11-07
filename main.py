@@ -18,18 +18,22 @@ def get_words(file):
     return words
 
 
-def load_vectors(file):
+def load_vectors(file, common_words):
     vectors = dict()
     lines = file_lines(file)
     fin = open(file)
     i = 0
+    last_amount = 0
     with tqdm(total=lines) as pbar:
         for l in fin:
-            parts = l[:-1].split(' ')
-            vectors[parts[0].lower()] = np.array([float(n) for n in parts[1:]])
             i += 1
-            if i % 100 == 0:
-                pbar.update(100)
+            parts = l[:-1].split(' ')
+            word = parts[0].lower()
+            if word not in common_words:
+                continue
+            vectors[word] = np.array([float(n) for n in parts[1:]])
+            pbar.update(i-last_amount)
+            last_amount = i
     fin.close()
     return vectors
 
@@ -37,7 +41,9 @@ def load_vectors(file):
 print 'loading smarts...'
 GLOVE_VECTORS = 'resources/glove.6B.300d.vectors'
 LEXVEC_VECTORS = 'resources/lexvec.enwiki+newscrawl.300d.W.pos.vectors'
-vectors = load_vectors(GLOVE_VECTORS)
+common_words = set([w for w in get_words('resources/wordlist.10000.txt') if len(w) > 2])
+vectors = load_vectors(GLOVE_VECTORS, common_words)
+
 
 cards = get_words('resources/codenames.txt')
 cards = [w for w in cards if w in vectors]
@@ -46,9 +52,9 @@ cards = [w for w in cards if w in vectors]
 print 'starting game...'
 game = Game(cards,
             # red team
-            [CodeGiverAI('red', vectors, True), GuesserHuman()],
+            [CodeGiverAI('red', vectors, debug=False), GuesserHuman()],
             # blue team
-            [CodeGiverAI('blue', vectors), GuesserAI(vectors)])
+            [CodeGiverAI('blue', vectors, debug=False), GuesserAI(vectors)])
 game.start()
 
 
