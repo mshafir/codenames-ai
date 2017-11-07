@@ -2,6 +2,7 @@ from game import Game
 from codegiver import CodeGiverHuman, CodeGiverAI
 from guesser import GuesserHuman, GuesserAI
 import numpy as np
+from scipy.spatial import distance
 from tqdm import tqdm
 
 
@@ -43,6 +44,7 @@ GLOVE_VECTORS = 'resources/glove.6B.300d.vectors'
 LEXVEC_VECTORS = 'resources/lexvec.enwiki+newscrawl.300d.W.pos.vectors'
 common_words = set([w for w in get_words('resources/wordlist.10000.txt') if len(w) > 2])
 vectors = load_vectors(GLOVE_VECTORS, common_words)
+dist_func = distance.cosine
 
 
 cards = get_words('resources/codenames.txt')
@@ -52,9 +54,9 @@ cards = [w for w in cards if w in vectors]
 print 'starting game...'
 game = Game(cards,
             # red team
-            [CodeGiverAI('red', vectors, debug=False), GuesserHuman()],
+            [CodeGiverAI('red', vectors, dist_func, debug=True), GuesserHuman()],
             # blue team
-            [CodeGiverAI('blue', vectors, debug=False), GuesserAI(vectors)])
+            [CodeGiverAI('blue', vectors, dist_func, debug=False), GuesserAI(vectors, dist_func)])
 game.start()
 
 

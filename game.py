@@ -54,7 +54,7 @@ class Game:
             print str(self.tries) + ' guesses left'
             word = self.guessers[current_turn].guess(self.clue, self.board, self.tries)
             self.check_word(word)
-            time.sleep(3)
+            time.sleep(2)
 
 
     def print_turn(self):

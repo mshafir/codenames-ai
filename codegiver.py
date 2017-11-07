@@ -1,10 +1,10 @@
 import numpy as np
 from tqdm import tqdm
-from scipy.spatial import distance
 
 
 # aka. fathomability
-SIMILARITY_THRESHOLD = 10
+SIMILARITY_THRESHOLD = 0.7
+DISTINCTNESS_THRESHOLD = 0.05
 
 
 def legal_word(w, words):
@@ -37,11 +37,12 @@ class Hint:
 
 
 class CodeGiverAI:
-    def __init__(self, team, vectors, debug=False):
+    def __init__(self, team, vectors, similarity_func, debug=False):
         self.team = team
         self.words = vectors.keys()
         self.vectors = vectors
         self.debug = debug
+        self.similarity_func = similarity_func
 
     def give_hint(self, board):
         print 'thinking...'
@@ -52,10 +53,9 @@ class CodeGiverAI:
         return best_hint.word, best_hint.num
 
     def evaluate_hint(self, hint):
-        if hint.num == 1:
-            return 1
-        else:
-            return (SIMILARITY_THRESHOLD - hint.similarity) + hint.distinctness + hint.num * 0.2
+        if hint.similarity < SIMILARITY_THRESHOLD and hint.distinctness > DISTINCTNESS_THRESHOLD:
+            return hint.num
+        return hint.distinctness - hint.similarity
 
     def score_hints(self, board):
         hints = [self.score_word(w, board) for w in tqdm(self.words) if legal_word(w, board.words)]
@@ -99,4 +99,4 @@ class CodeGiverAI:
         return [(w, board.word_type(w), self.word_similarity(word, w)) for w in board.remaining_words()]
 
     def word_similarity(self, word1, word2):
-        return distance.euclidean(self.vectors[word1], self.vectors[word2])
+        return self.similarity_func(self.vectors[word1], self.vectors[word2])

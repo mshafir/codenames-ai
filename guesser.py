@@ -1,5 +1,5 @@
 import time
-from scipy.spatial import distance
+
 
 class GuesserHuman:
     def guess(self, clue, board, tries_left):
@@ -8,13 +8,14 @@ class GuesserHuman:
             return word
         else:
             print 'Word not on board'
-            self.guess(word, board)
+            self.guess(clue, board, tries_left)
 
 class GuesserAI:
-    def __init__(self, vectors, debug=False):
+    def __init__(self, vectors, similarity_func, debug=False):
         self.words = vectors.keys()
         self.vectors = vectors
         self.debug = debug
+        self.similarity_func = similarity_func
 
     def guess(self, clue, board, tries_left):
         # realistic delay
@@ -27,4 +28,4 @@ class GuesserAI:
         return best[0]
 
     def word_similarity(self, word1, word2):
-        return distance.euclidean(self.vectors[word1], self.vectors[word2])
+        return self.similarity_func(self.vectors[word1], self.vectors[word2])
