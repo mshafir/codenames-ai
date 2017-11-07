@@ -54,9 +54,9 @@ cards = [w for w in cards if w in vectors]
 print 'starting game...'
 game = Game(cards,
             # red team
-            [CodeGiverAI('red', vectors, dist_func, debug=True), GuesserHuman()],
+            [CodeGiverAI('red', vectors, dist_func, debug=False), GuesserHuman()],
             # blue team
-            [CodeGiverAI('blue', vectors, dist_func, debug=False), GuesserAI(vectors, dist_func)])
+            [CodeGiverHuman(), GuesserAI(vectors, dist_func)])
 game.start()
 
 

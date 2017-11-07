@@ -56,10 +56,14 @@ class Board:
         print ('|' + '-' * 19) * 5 + '|'
 
     def print_answers(self):
-        print 'red: '+', '.join(self.red)
-        print 'blue: ' + ', '.join(self.blue)
-        print 'neutral: ' + ', '.join(self.neutral)
-        print 'assassin: ' + self.assassin
+        print self.get_answers()
+
+    def get_answers(self):
+        str = 'red: ' + ', '.join(self.red) + '\n'
+        str += 'blue: ' + ', '.join(self.blue) + '\n'
+        str += 'neutral: ' + ', '.join(self.neutral) + '\n'
+        str += 'assassin: ' + self.assassin + '\n'
+        return str
 
     def scores(self):
         return [len(self.red - self.found), len(self.blue - self.found)]

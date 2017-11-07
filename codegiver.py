@@ -18,6 +18,10 @@ def legal_word(w, words):
 
 class CodeGiverHuman:
     def give_hint(self, board):
+        fout = open('board_answers.txt', 'w')
+        fout.write(board.get_answers())
+        fout.close()
+        print 'Check board_answers.txt for the answers to the current board, but do not let the others see'
         clue = raw_input('What is your clue?\n > ')
         num = raw_input('How many words is your clue for? \n > ')
         return clue, int(num)
