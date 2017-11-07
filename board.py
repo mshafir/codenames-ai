@@ -27,7 +27,6 @@ class Board:
         self.assassin = self.words[17]
         self.neutral = set(self.words[18:])
         self.found = set()
-        random.shuffle(self.words)
 
     def word_type(self, word):
         if word in self.red:
@@ -56,12 +55,15 @@ class Board:
         print ('|' + '-' * 19) * 5 + '|'
 
     def print_answers(self):
-        print self.get_answers()
+        print 'red: ' + ', '.join(self.red)
+        print 'blue: ' + ', '.join(self.blue)
+        print 'neutral: ' + ', '.join(self.neutral)
+        print 'assassin: ' + self.assassin
 
     def get_answers(self):
-        str = 'red: ' + ', '.join(self.red) + '\n'
-        str += 'blue: ' + ', '.join(self.blue) + '\n'
-        str += 'neutral: ' + ', '.join(self.neutral) + '\n'
+        str = 'red: ' + ', '.join(self.red - self.found) + '\n'
+        str += 'blue: ' + ', '.join(self.blue - self.found) + '\n'
+        str += 'neutral: ' + ', '.join(self.neutral - self.found) + '\n'
         str += 'assassin: ' + self.assassin + '\n'
         return str
 
@@ -77,6 +79,3 @@ class Board:
     def mark_word(self, word):
         self.found.add(word)
         return self.word_type(word)
-
-
-

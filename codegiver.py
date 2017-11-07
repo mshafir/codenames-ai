@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+from collections import defaultdict
 
 
 # aka. fathomability
@@ -17,12 +18,19 @@ def legal_word(w, words):
 
 
 class CodeGiverHuman:
+    def __init__(self, words):
+        self.words = words  # allowed words
+
     def give_hint(self, board):
         fout = open('board_answers.txt', 'w')
         fout.write(board.get_answers())
         fout.close()
         print 'Check board_answers.txt for the answers to the current board, but do not let the others see'
-        clue = raw_input('What is your clue?\n > ')
+        clue = ''
+        while clue == '' or clue not in self.words:
+            clue = raw_input('What is your clue?\n > ')
+            if clue not in self.words:
+                print 'Unknown word '+clue
         num = raw_input('How many words is your clue for? \n > ')
         return clue, int(num)
 
@@ -41,28 +49,35 @@ class Hint:
 
 
 class CodeGiverAI:
-    def __init__(self, team, vectors, similarity_func, debug=False):
+    def __init__(self, team, vectors, similarity_func, words=None, debug=False):
         self.team = team
-        self.words = vectors.keys()
+        if words is None:
+            self.words = vectors.keys()
+        else:
+            self.words = words
         self.vectors = vectors
         self.debug = debug
         self.similarity_func = similarity_func
+        self.history = set()
+        self.cache = defaultdict(float)
 
     def give_hint(self, board):
         print 'thinking...'
         hints = self.score_hints(board)
         best_hint = hints[0]
         if self.debug:
-            print best_hint
+            for i in range(10):
+                print hints[i]
+        self.history.add(best_hint.word)
         return best_hint.word, best_hint.num
 
     def evaluate_hint(self, hint):
-        if hint.similarity < SIMILARITY_THRESHOLD and hint.distinctness > DISTINCTNESS_THRESHOLD:
+        if hint.distinctness > DISTINCTNESS_THRESHOLD:
             return hint.num
         return hint.distinctness - hint.similarity
 
     def score_hints(self, board):
-        hints = [self.score_word(w, board) for w in tqdm(self.words) if legal_word(w, board.words)]
+        hints = [self.score_word(w, board) for w in tqdm(self.words) if legal_word(w, board.words) and not w in self.history]
         hints = [hint for hint in hints if hint.num > 0]
         return sorted(hints, key=self.evaluate_hint, reverse=True)
 
@@ -103,4 +118,9 @@ class CodeGiverAI:
         return [(w, board.word_type(w), self.word_similarity(word, w)) for w in board.remaining_words()]
 
     def word_similarity(self, word1, word2):
-        return self.similarity_func(self.vectors[word1], self.vectors[word2])
+        if word1 + '.' + word2 in self.cache:
+            return self.cache[word1 + '.' + word2]
+        score = self.similarity_func(self.vectors[word1], self.vectors[word2])
+        self.cache[word1+'.'+word2] = score
+        self.cache[word2+'.'+word1] = score
+        return score

@@ -15,8 +15,10 @@ class Game:
         }
 
     def start(self):
+        random.seed(101)
         random.shuffle(self.cards)
         self.board = Board(self.cards[:25])
+        random.shuffle(self.board.words)
         self.turn = 'red'
         self.tries = 0
         print
@@ -54,7 +56,7 @@ class Game:
             print str(self.tries) + ' guesses left'
             word = self.guessers[current_turn].guess(self.clue, self.board, self.tries)
             self.check_word(word)
-            time.sleep(2)
+            time.sleep(1)
 
 
     def print_turn(self):

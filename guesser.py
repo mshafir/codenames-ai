@@ -11,15 +11,18 @@ class GuesserHuman:
             self.guess(clue, board, tries_left)
 
 class GuesserAI:
-    def __init__(self, vectors, similarity_func, debug=False):
-        self.words = vectors.keys()
+    def __init__(self, vectors, similarity_func, words=None, debug=False):
+        if words is None:
+            self.words = vectors.keys()
+        else:
+            self.words = words
         self.vectors = vectors
         self.debug = debug
         self.similarity_func = similarity_func
 
     def guess(self, clue, board, tries_left):
         # realistic delay
-        time.sleep(2)
+        time.sleep(1)
         if tries_left == 1:
             return 'pass'
         board_scores = [(w, self.word_similarity(clue, w)) for w in board.remaining_words()]

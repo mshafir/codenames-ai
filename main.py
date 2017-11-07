@@ -1,62 +1,40 @@
 from game import Game
 from codegiver import CodeGiverHuman, CodeGiverAI
 from guesser import GuesserHuman, GuesserAI
-import numpy as np
 from scipy.spatial import distance
-from tqdm import tqdm
+from utils import get_words, load_vectors
 
 
-def file_lines(file):
-    return sum(1 for line in open(file))
-
-
-def get_words(file):
-    fin = open(file)
-    words = list()
-    for l in fin:
-        words.append(l[:-1].strip().lower())
-    fin.close()
-    return words
-
-
-def load_vectors(file, common_words):
-    vectors = dict()
-    lines = file_lines(file)
-    fin = open(file)
-    i = 0
-    last_amount = 0
-    with tqdm(total=lines) as pbar:
-        for l in fin:
-            i += 1
-            parts = l[:-1].split(' ')
-            word = parts[0].lower()
-            if word not in common_words:
-                continue
-            vectors[word] = np.array([float(n) for n in parts[1:]])
-            pbar.update(i-last_amount)
-            last_amount = i
-    fin.close()
-    return vectors
-
-
-print 'loading smarts...'
+# potential sources
 GLOVE_VECTORS = 'resources/glove.6B.300d.vectors'
+GLOVE2_VECTORS = 'resources/glove.42B.300d.vectors'
 LEXVEC_VECTORS = 'resources/lexvec.enwiki+newscrawl.300d.W.pos.vectors'
-common_words = set([w for w in get_words('resources/wordlist.10000.txt') if len(w) > 2])
-vectors = load_vectors(GLOVE_VECTORS, common_words)
+DEP_VECTORS = 'resources/deps.vectors'
+GOOGLE_VECTORS = 'resources/GoogleNews-vectors-negative300.bin'
+
+SMALL_WORDS = 'resources/wordlist.10000.words'
+LARGE_WORDS = 'resources/words_alpha.words'
+
+CARDS = 'resources/codenames.txt'
+
+# loading routine
+print 'loading smarts...'
+common_words = set([w for w in get_words(LARGE_WORDS) if len(w) > 2])
+vectors = load_vectors(GLOVE2_VECTORS, common_words)
+common_words = vectors.keys()
 dist_func = distance.cosine
 
 
-cards = get_words('resources/codenames.txt')
+cards = get_words(CARDS)
 cards = [w for w in cards if w in vectors]
 
-
+# game start up
 print 'starting game...'
 game = Game(cards,
             # red team
-            [CodeGiverAI('red', vectors, dist_func, debug=False), GuesserHuman()],
+            [CodeGiverAI('red', vectors, dist_func, words=common_words, debug=True), GuesserHuman()],
             # blue team
-            [CodeGiverHuman(), GuesserAI(vectors, dist_func)])
+            [CodeGiverHuman(common_words), GuesserAI(vectors, dist_func, words=common_words)])
 game.start()
 
 

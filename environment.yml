@@ -16,6 +16,15 @@ dependencies:
 - wheel=0.29.0=py27_0
 - zlib=1.2.11=0
 - pip:
+  - boto==2.48.0
+  - bz2file==0.98
+  - chardet==3.0.4
+  - gensim==3.1.0
+  - idna==2.6
+  - requests==2.18.4
+  - six==1.11.0
+  - smart-open==1.5.3
   - tqdm==4.19.4
+  - urllib3==1.22
 prefix: /Users/michael.shafir/miniconda2/envs/codenames
 
