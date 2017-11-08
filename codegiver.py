@@ -6,6 +6,8 @@ from collections import defaultdict
 # aka. fathomability
 SIMILARITY_THRESHOLD = 0.7
 DISTINCTNESS_THRESHOLD = 0.05
+COUNT_MIN_THRESHOLD = 5000000
+COUNT_MAX_THRESHOLD = 50000000
 
 
 def legal_word(w, words):
@@ -49,31 +51,29 @@ class Hint:
 
 
 class CodeGiverAI:
-    def __init__(self, team, vectors, similarity_func, words=None, debug=False):
+    def __init__(self, team, distances, counts, debug=False):
         self.team = team
-        if words is None:
-            self.words = vectors.keys()
-        else:
-            self.words = words
-        self.vectors = vectors
+        self.words = distances.keys()
+        self.distances = distances
+        self.counts = counts
         self.debug = debug
-        self.similarity_func = similarity_func
         self.history = set()
-        self.cache = defaultdict(float)
 
     def give_hint(self, board):
         print 'thinking...'
         hints = self.score_hints(board)
         best_hint = hints[0]
         if self.debug:
-            for i in range(10):
+            for i in range(20):
                 print hints[i]
         self.history.add(best_hint.word)
         return best_hint.word, best_hint.num
 
     def evaluate_hint(self, hint):
+        if self.counts[hint.word] < COUNT_MIN_THRESHOLD or self.counts[hint.word] > COUNT_MAX_THRESHOLD:
+            return 0
         if hint.distinctness > DISTINCTNESS_THRESHOLD:
-            return hint.num
+            return hint.num + hint.distinctness - hint.similarity
         return hint.distinctness - hint.similarity
 
     def score_hints(self, board):
@@ -118,9 +118,5 @@ class CodeGiverAI:
         return [(w, board.word_type(w), self.word_similarity(word, w)) for w in board.remaining_words()]
 
     def word_similarity(self, word1, word2):
-        if word1 + '.' + word2 in self.cache:
-            return self.cache[word1 + '.' + word2]
-        score = self.similarity_func(self.vectors[word1], self.vectors[word2])
-        self.cache[word1+'.'+word2] = score
-        self.cache[word2+'.'+word1] = score
-        return score
+        return self.distances[word1][word2]
+

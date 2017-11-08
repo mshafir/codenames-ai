@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import numpy as np
 from gensim.models import KeyedVectors
+from collections import defaultdict
 
 
 def file_lines(file):
@@ -38,3 +39,29 @@ def load_vectors(file, common_words, abort=None):
             last_amount = i
     fin.close()
     return vectors
+
+
+def load_distances(file):
+    lines = file_lines(file)
+    fin = open(file)
+    distances = defaultdict(lambda: defaultdict(lambda: 2))
+    with tqdm(total=lines) as pbar:
+        for l in fin:
+            word,card,score = l[:-1].split(' ')
+            distances[word][card] = float(score)
+            pbar.update()
+    fin.close()
+    return distances
+
+
+def load_word_counts(file):
+    lines = file_lines(file)
+    fin = open(file)
+    counts = defaultdict(int)
+    with tqdm(total=lines) as pbar:
+        for l in fin:
+            word,c = l[:-1].split('\t')
+            counts[word] = int(c)
+            pbar.update()
+    fin.close()
+    return counts

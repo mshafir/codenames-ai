@@ -11,14 +11,10 @@ class GuesserHuman:
             self.guess(clue, board, tries_left)
 
 class GuesserAI:
-    def __init__(self, vectors, similarity_func, words=None, debug=False):
-        if words is None:
-            self.words = vectors.keys()
-        else:
-            self.words = words
-        self.vectors = vectors
+    def __init__(self, distances, debug=False):
+        self.words = distances.keys()
+        self.distances = distances
         self.debug = debug
-        self.similarity_func = similarity_func
 
     def guess(self, clue, board, tries_left):
         # realistic delay
@@ -31,4 +27,4 @@ class GuesserAI:
         return best[0]
 
     def word_similarity(self, word1, word2):
-        return self.similarity_func(self.vectors[word1], self.vectors[word2])
+        return self.distances[word1][word2]
