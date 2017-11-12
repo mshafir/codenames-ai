@@ -1,0 +1,13 @@
+<div class="board">
+	{{#each board as |card|}}
+		{{#liquid-if card.found class="flipY"}}
+			<div class="game-card found {{card.type}}">
+				{{card.type}}
+			</div>
+		{{else}}
+			<div class="game-card {{if clueGiving "clue"}} {{card.type}}" {{action "selectedCard" card}}>
+				{{card.word}}
+			</div>
+		{{/liquid-if}}
+	{{/each}}
+</div>

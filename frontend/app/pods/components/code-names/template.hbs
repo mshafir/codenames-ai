@@ -1,0 +1,80 @@
+
+<div class="game">
+	<div class="game-table">
+		{{game-board
+			board=board
+			clueGiving=(eq humanRole 'codegiving')
+			selectedCard=(action 'selectedCard')}}
+	</div>
+
+	<div class="game-control grid-x">
+		<div class="small-3 cell text-left">
+			<div class="game-label">turn</div>
+			<div class="team {{turn}}">{{turn}} team</div>
+		</div>
+
+		<div class="small-6 cell">
+			{{#if (not mode)}}
+				<div class="game-label">select a game mode</div>
+				<button {{action "start" "guessing"}}>Human Guessers</button>
+				<button {{action "start" "codegiving"}}>Human Codegivers</button>
+
+			{{else if (eq mode 'chooseDifficulty')}}
+				<div class="game-label">select a difficulty level</div>
+				<button {{action "start" "easy"}}>Easy</button>
+				<button {{action "start" "hard"}}>Hard</button>
+				<button {{action "start" "impossible"}}>Impossible</button>
+
+			{{else}}
+
+				{{#if gameEnd}}
+					<div class="game-end">
+						Game Over!
+						{{#if (eq redLeft 0)}}
+							Red Won!
+						{{else if (eq blueLeft 0)}}
+							Blue Won!
+						{{else}}
+							{{assassinGuessed}} guessed the assassin and lost!
+						{{/if}}
+						<button {{action "playAgain"}}>Play again!</button>
+					</div>
+				{{else}}
+
+					{{#if (eq phase 'codegiving')}}
+
+						{{#if (eq mode 'ai')}}
+							{{#if thinking}}
+								<div class="thinking">{{loader-ball-clip-rotate-multiple}} Thinking...</div>
+							{{/if}}
+						{{else}}
+							<div class="game-label">Give a hint:</div>
+							<div class="give-hint">
+								{{input id="hint" value=hintWord}} for
+								<button {{action "submitHint" 1}}>1</button>
+								<button {{action "submitHint" 2}}>2</button>
+								<button {{action "submitHint" 3}}>3</button>
+								<button {{action "submitHint" 4}}>4</button>
+								<button {{action "submitHint" 5}}>5</button>
+							</div>
+						{{/if}}
+
+					{{else}}
+
+						<div class="game-label">{{guesses}} guesses left</div>
+						<div class="game-hint">{{hintWord}} for {{hintNum}}</div>
+						<div class="game-instructions">select a card to guess it or <button class="small" {{action "pass"}}>pass</button></div>
+
+					{{/if}}
+
+				{{/if}}
+			{{/if}}
+		</div>
+
+		<div class="small-3 cell text-right">
+			<div class="game-label">score</div>
+			<div class="score">Red: {{redLeft}} {{if (eq redLeft 1) "card" "cards"}} left</div>
+			<div class="score">Blue: {{blueLeft}} {{if (eq blueLeft 1) "card" "cards"}} left</div>
+		</div>
+	</div>
+</div>

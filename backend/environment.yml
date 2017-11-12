@@ -19,12 +19,19 @@ dependencies:
   - boto==2.48.0
   - bz2file==0.98
   - chardet==3.0.4
+  - click==6.7
+  - flask==0.12.2
   - gensim==3.1.0
+  - gunicorn==19.7.1
   - idna==2.6
+  - itsdangerous==0.24
+  - jinja2==2.10
+  - markupsafe==1.0
   - requests==2.18.4
   - six==1.11.0
   - smart-open==1.5.3
   - tqdm==4.19.4
   - urllib3==1.22
+  - werkzeug==0.12.2
 prefix: /Users/michael.shafir/miniconda2/envs/codenames
 

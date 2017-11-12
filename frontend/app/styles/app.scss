@@ -1,0 +1,56 @@
+@import "settings";
+@import 'foundation-sites/foundation';
+@include foundation-everything;
+@import "ember-cli-loaders/loaders";
+@import 'game';
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: helvetica;
+}
+
+button {
+	border: 1px solid #ddd;
+	padding: 0.8rem 1rem;
+	background-color: #fafafa;
+	margin: 1rem;
+	font-size: 1.2rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	&:hover {
+		background-color: white;
+	}
+	&.small {
+		font-size: 0.9rem;
+		padding: 0.4rem 1rem;
+		margin: 0;
+	}
+}
+
+.liquid-container {
+	display: inline-block;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.overlay-text {
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+	text-align: center;
+	font-size: 5rem;
+	color: #fafafa;
+	padding-top: 10%;
+	text-shadow: 0px 0px 20px rgba(0,0,0,0.8);
+}

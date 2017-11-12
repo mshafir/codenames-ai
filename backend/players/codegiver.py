@@ -1,12 +1,13 @@
+import random
 import numpy as np
 from tqdm import tqdm
 from collections import defaultdict
 
 
 # aka. fathomability
-SIMILARITY_THRESHOLD = 0.7
-DISTINCTNESS_THRESHOLD = 0.05
-COUNT_MIN_THRESHOLD = 5000000
+SIMILARITY_THRESHOLD = 0.68
+DISTINCTNESS_THRESHOLD = 0.07
+COUNT_MIN_THRESHOLD = 8000000
 COUNT_MAX_THRESHOLD = 50000000
 
 
@@ -65,7 +66,7 @@ class CodeGiverAI:
         best_hint = hints[0]
         if self.debug:
             for i in range(20):
-                print hints[i]
+                print str(hints[i]) + ' FINAL: ' + str(self.evaluate_hint(hints[i]))
         self.history.add(best_hint.word)
         return best_hint.word, best_hint.num
 
@@ -119,4 +120,3 @@ class CodeGiverAI:
 
     def word_similarity(self, word1, word2):
         return self.distances[word1][word2]
-

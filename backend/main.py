@@ -1,7 +1,7 @@
-from game import Game
-from codegiver import CodeGiverHuman, CodeGiverAI
-from guesser import GuesserHuman, GuesserAI
-from utils import get_words, load_distances, load_word_counts
+from game.game import Game
+from players.codegiver import CodeGiverHuman, CodeGiverAI
+from players.guesser import GuesserHuman, GuesserAI
+from utils.utils import get_words, load_distances, load_word_counts
 
 print 'loading word counts'
 counts = load_word_counts('resources/word_counts.counts')
@@ -26,5 +26,3 @@ game = Game(cards,
             # [CodeGiverHuman(distances.keys()), GuesserAI(distances)]
 )
 game.start()
-
-
