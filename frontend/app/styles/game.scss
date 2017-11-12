@@ -1,0 +1,149 @@
+.game {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	position: relative;
+
+	.game-table {
+		background-color: #888;
+		padding: 2rem 10rem;
+		flex: 1 1 auto;
+		overflow-y: auto;
+		position: relative;
+	}
+
+	.game-control {
+		background-color: white;
+		flex: 0 1 auto;
+		box-shadow: -2px -2px 5px 2px rgba(0,0,0,0.15);
+		z-index: 10;
+		text-align: center;
+		font-size: 1.2rem;
+		padding: 1rem;
+
+		.game-label {
+			font-size: 0.8rem;
+			color: #666;
+		}
+
+		.game-hint {
+			font-size: 1.7rem;
+			letter-spacing: 0.2rem;
+			margin-bottom: 0;
+		}
+
+		.give-hint {
+			input {
+				display: inline;
+				width: 30%;
+			}
+		}
+
+		.game-instructions {
+			font-size: 0.9rem;
+			button {
+				font-size: 0.9rem;
+				padding: 0.4rem 1rem;
+				margin: 0;
+			}
+		}
+
+		.thinking {
+			width: 10rem;
+			position: relative;
+			margin: 1rem 2rem;
+			.loader-base {
+				position: absolute;
+				top: 1rem;
+			}
+		}
+
+		.turn {
+			font-size: 0.8rem;
+		}
+
+		.team {
+			font-size: 1.7rem;
+			&.red {
+				color: #a55;
+			}
+			&.blue {
+				color: #55a;
+			}
+		}
+
+		.game-end {
+			font-size: 1.7rem;
+		}
+	}
+
+	.board {
+		.liquid-container {
+			margin: .4%;
+			width: 18%;
+			height: 7rem;
+			display: inline-block;
+			overflow: hidden;
+			perspective: 1000px;
+		}
+		.liquid-child {
+			overflow: visible;
+		}
+	}
+
+	.game-card {
+		display: inline-block;
+		padding: 2rem 1rem;
+		width: 95%;
+		background-color: white;
+		border-radius: 0.2rem;
+		box-shadow: 1px 1px 5px 2px rgba(0,0,0,0.25);
+		text-align: center;
+		font-size: 1.5rem;
+		letter-spacing: 0.2rem;
+		cursor: pointer;
+		transition: all 0.2s;
+
+		&:hover {
+			background-color: #fafaff;
+			letter-spacing: 0.3rem;
+		}
+
+		&.clue {
+			padding: 1.4rem 1rem;
+			&.red {
+				border: .6rem solid #faa;
+			}
+			&.blue {
+				border: .6rem solid #aaf;
+			}
+			&.neutral {
+				border: .6rem solid #aaa;
+			}
+			&.assassin {
+				border: .6rem solid #444;
+			}
+		}
+
+		&.found {
+			&:hover {
+				background-color: white;
+				letter-spacing: 0.2rem;
+				cursor: default;
+			}
+			&.red {
+				background-color: #faa;
+			}
+			&.blue {
+				background-color: #aaf;
+			}
+			&.neutral {
+				background-color: #aaa;
+			}
+			&.assassin {
+				background-color: #444;
+				color: white;
+			}
+		}
+	}
+}
