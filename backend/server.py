@@ -12,7 +12,7 @@ print 'loading word counts'
 counts = load_word_counts('resources/word_counts.counts')
 
 print 'loading similarities'
-distances = load_distances('resources/cached.dist.cut')
+distances = load_distances('resources/cached.dist')
 
 print 'loading cards'
 CARDS = 'resources/codenames.txt'
