@@ -71,14 +71,19 @@ class CodeGiverAI:
         return best_hint.word, best_hint.num
 
     def evaluate_hint(self, hint):
-        if self.counts[hint.word] < COUNT_MIN_THRESHOLD or self.counts[hint.word] > COUNT_MAX_THRESHOLD:
-            return 0
         if hint.distinctness > DISTINCTNESS_THRESHOLD:
             return hint.num + hint.distinctness - hint.similarity
         return hint.distinctness - hint.similarity
 
+    def good_word(self, word, board):
+        meets_count_threshold = self.counts[word] < COUNT_MIN_THRESHOLD or self.counts[word] > COUNT_MAX_THRESHOLD
+        is_legal_word = legal_word(word, board.words)
+        not_in_history = not word in self.history
+        known_word = word in self.distances
+        return meets_count_threshold and is_legal_word and not_in_history and known_word
+
     def score_hints(self, board):
-        hints = [self.score_word(w, board) for w in tqdm(self.words) if legal_word(w, board.words) and not w in self.history]
+        hints = [self.score_word(w, board) for w in tqdm(self.words) if self.good_word(w, board)]
         hints = [hint for hint in hints if hint.num > 0]
         return sorted(hints, key=self.evaluate_hint, reverse=True)
 

@@ -1,4 +1,5 @@
 *.counts
 *.dist
+*.cut
 *.vectors
 words_alpha.words
