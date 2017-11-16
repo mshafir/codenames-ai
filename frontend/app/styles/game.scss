@@ -7,6 +7,9 @@
 	.game-table {
 		background-color: #888;
 		padding: 2rem 10rem;
+		@media screen and (max-width: 480px) {
+			padding: 1rem 1rem;
+		}
 		flex: 1 1 auto;
 		overflow-y: auto;
 		position: relative;
@@ -28,6 +31,9 @@
 
 		.game-hint {
 			font-size: 1.7rem;
+			@media screen and (max-width: 480px) {
+				font-size: 1.4rem;
+			}
 			letter-spacing: 0.2rem;
 			margin-bottom: 0;
 		}
@@ -62,8 +68,15 @@
 			font-size: 0.8rem;
 		}
 
+		.score {
+			font-size: 1rem;
+		}
+
 		.team {
 			font-size: 1.7rem;
+			@media screen and (max-width: 480px) {
+				font-size: 1.4rem;
+			}
 			&.red {
 				color: #a55;
 			}
@@ -78,10 +91,16 @@
 	}
 
 	.board {
+		text-align: center;
 		.liquid-container {
 			margin: .4%;
 			width: 18%;
 			height: 7rem;
+			@media screen and (max-width: 480px) {
+				width: 24%;
+				margin: 0.1%;
+				height: 5rem;
+			}
 			display: inline-block;
 			overflow: hidden;
 			perspective: 1000px;
@@ -103,6 +122,12 @@
 		letter-spacing: 0.2rem;
 		cursor: pointer;
 		transition: all 0.2s;
+
+		@media screen and (max-width: 480px) {
+			padding: 1.5rem 0.5rem;
+			font-size: 1.2rem;
+			letter-spacing: 0.1rem;
+		}
 
 		&:hover {
 			background-color: #fafaff;

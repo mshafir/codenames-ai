@@ -10,6 +10,12 @@ body {
 	font-family: helvetica;
 }
 
+@media screen and (max-width: 480px) {
+	html {
+		font-size: 0.6rem;
+	}
+}
+
 button {
 	border: 1px solid #ddd;
 	padding: 0.8rem 1rem;
