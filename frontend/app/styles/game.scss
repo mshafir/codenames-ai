@@ -7,7 +7,7 @@
 	.game-table {
 		background-color: #888;
 		padding: 2rem 10rem;
-		@media screen and (max-width: 480px) {
+		@media screen and (max-width: 800px) {
 			padding: 1rem 1rem;
 		}
 		flex: 1 1 auto;
@@ -31,7 +31,7 @@
 
 		.game-hint {
 			font-size: 1.7rem;
-			@media screen and (max-width: 480px) {
+			@media screen and (max-width: 800px) {
 				font-size: 1.4rem;
 			}
 			letter-spacing: 0.2rem;
@@ -74,7 +74,7 @@
 
 		.team {
 			font-size: 1.7rem;
-			@media screen and (max-width: 480px) {
+			@media screen and (max-width: 800px) {
 				font-size: 1.4rem;
 			}
 			&.red {
@@ -96,14 +96,15 @@
 			margin: .4%;
 			width: 18%;
 			height: 7rem;
-			@media screen and (max-width: 480px) {
-				width: 24%;
-				margin: 0.1%;
-				height: 5rem;
-			}
 			display: inline-block;
-			overflow: hidden;
+			overflow: visible;
 			perspective: 1000px;
+			vertical-align: top;
+			@media screen and (max-width: 800px) {
+				width: 24%;
+				margin: 0.2rem 0.1%;
+				height: 6rem;
+			}
 		}
 		.liquid-child {
 			overflow: visible;
@@ -123,9 +124,9 @@
 		cursor: pointer;
 		transition: all 0.2s;
 
-		@media screen and (max-width: 480px) {
-			padding: 1.5rem 0.5rem;
-			font-size: 1.2rem;
+		@media screen and (max-width: 800px) {
+			padding: 1.4rem 0.5rem;
+			font-size: 1,2rem;
 			letter-spacing: 0.1rem;
 		}
 
