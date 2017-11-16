@@ -137,6 +137,10 @@
 
 		&.clue {
 			padding: 1.4rem 1rem;
+			@media screen and (max-width: 800px) {
+				padding: 0.8rem 0.5rem;
+				font-size: 1rem;
+			}
 			&.red {
 				border: .6rem solid #faa;
 			}
@@ -152,6 +156,9 @@
 		}
 
 		&.found {
+			@media screen and (max-width: 800px) {
+				font-size: 1rem;
+			}
 			&:hover {
 				background-color: white;
 				letter-spacing: 0.2rem;
