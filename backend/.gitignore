@@ -3,3 +3,4 @@
 *.pyc
 board_answers.txt
 static
+*.log
