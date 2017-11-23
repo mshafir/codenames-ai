@@ -1,6 +1,8 @@
 import time
 import random
 
+# shift scores so the boandary between good/bad is at a more confusing place
+BASE_SCORE_SHIFT = 0.01
 
 class GuesserHuman:
     def guess(self, clue, board, tries_left):
@@ -22,7 +24,8 @@ class GuesserAI:
         time.sleep(1)
         if tries_left == 1:
             return 'pass'
-        board_scores = [(w, round(self.word_similarity(clue, w)*quality)) for w in board.remaining_words()]
+        random_shift = (100.0 - quality) * BASE_SCORE_SHIFT
+        board_scores = [(w, self.word_similarity(clue, w) + random.uniform(-random_shift, random_shift)) for w in board.remaining_words()]
         random.shuffle(board_scores)
         best = sorted(board_scores, key=lambda x: x[1])
         if self.debug:

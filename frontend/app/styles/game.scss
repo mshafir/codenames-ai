@@ -126,7 +126,7 @@
 
 		@media screen and (max-width: 800px) {
 			padding: 1.4rem 0.5rem;
-			font-size: 1,2rem;
+			font-size: 1.2rem;
 			letter-spacing: 0.1rem;
 		}
 
@@ -139,7 +139,7 @@
 			padding: 1.4rem 1rem;
 			@media screen and (max-width: 800px) {
 				padding: 0.8rem 0.5rem;
-				font-size: 1rem;
+				font-size: 1.2rem;
 			}
 			&.red {
 				border: .6rem solid #faa;
@@ -157,7 +157,7 @@
 
 		&.found {
 			@media screen and (max-width: 800px) {
-				font-size: 1rem;
+				font-size: 1.2rem;
 			}
 			&:hover {
 				background-color: white;

@@ -48,7 +48,7 @@ def load_distances(file):
     with tqdm(total=lines) as pbar:
         for l in fin:
             word,card,score = l[:-1].split(' ')
-            distances[word][card] = float(score)
+            distances[word.lower()][card.lower()] = float(score)
             pbar.update()
     fin.close()
     return distances
@@ -61,7 +61,7 @@ def load_word_counts(file):
     with tqdm(total=lines) as pbar:
         for l in fin:
             word,c = l[:-1].split('\t')
-            counts[word] = int(c)
+            counts[word.lower()] = int(c)
             pbar.update()
     fin.close()
     return counts

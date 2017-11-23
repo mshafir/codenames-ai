@@ -28,6 +28,12 @@ class Board:
         self.neutral = set(self.words[18:])
         self.found = set()
 
+    def team_words(self, team):
+        if team == 'red':
+            return self.red
+        else:
+            return self.blue
+
     def word_type(self, word):
         if word in self.red:
             return 'red'

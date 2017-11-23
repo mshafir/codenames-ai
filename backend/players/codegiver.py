@@ -6,6 +6,7 @@ from collections import defaultdict
 
 # aka. fathomability
 SIMILARITY_THRESHOLD = 0.68
+TOO_SIMILAR_THRESHOLD = 0.4
 DISTINCTNESS_THRESHOLD = 0.07
 COUNT_MIN_THRESHOLD = 8000000
 COUNT_MAX_THRESHOLD = 50000000
@@ -39,16 +40,17 @@ class CodeGiverHuman:
 
 
 class Hint:
-    def __init__(self, word, num=0, similarity=0., distinctness=0., intended=None):
+    def __init__(self, word, num=0, similarity=0., distinctness=0., first_non_team_type='neutral', intended=None):
         self.word = word
         self.num = num
         self.similarity = similarity
         self.distinctness = distinctness
         self.intended = intended
+        self.first_non_team_type = first_non_team_type
 
     def __str__(self):
-        return "%s for %i (similarity: %f, distinctness: %f, intended: %s)" % \
-              (self.word, self.num, self.similarity, self.distinctness, ', '.join(self.intended))
+        return "%s for %i (similarity: %f, distinctness: %f, first_non_team_type: %s, intended: %s)" % \
+              (self.word, self.num, self.similarity, self.distinctness, self.first_non_team_type, ', '.join(self.intended))
 
 
 class CodeGiverAI:
@@ -71,16 +73,18 @@ class CodeGiverAI:
         return best_hint.word, best_hint.num
 
     def evaluate_hint(self, hint):
-        if hint.distinctness > DISTINCTNESS_THRESHOLD:
-            return hint.num + hint.distinctness - hint.similarity
-        return hint.distinctness - hint.similarity
+        penalty = 0
+        if hint.first_non_team_type == 'assassin':
+            penalty = 0.2
+        elif hint.first_non_team_type != 'neutral':
+            penalty = 0.1
+        return hint.num + hint.distinctness - hint.similarity - penalty
 
     def good_word(self, word, board):
         return (self.counts[word] < COUNT_MIN_THRESHOLD or self.counts[word] > COUNT_MAX_THRESHOLD
             and legal_word(word, board.words)
             and not word in self.history
-            and word in self.distances
-            and min([self.distances[word][board_word] for board_word in board.words]) <= SIMILARITY_THRESHOLD)
+            and word in self.distances)
 
     def score_hints(self, board):
         print "filtering potential words..."
@@ -91,37 +95,40 @@ class CodeGiverAI:
         return sorted(hints, key=self.evaluate_hint, reverse=True)
 
     def score_word(self, word, board):
-        similarity = sorted(self.board_similarity(word, board), key=lambda w: w[2])
+        scores = self.board_similarity(word, board)
 
-        team_words = []
-        first_non_team_word = None
-        first_non_team_type = None
-        for w, type, score in similarity:
+        # lower is better, find best non-team type and score
+        team_scores = []
+        best_non_team_score = SIMILARITY_THRESHOLD
+        best_non_team_type = 'neutral'
+        for w, type, score in scores:
             if type == self.team:
-                team_words.append((w, score))
+                team_scores.append((w, type, score))
             else:
-                first_non_team_word = (w, score)
-                first_non_team_type = type
-                break
+                if score < best_non_team_score:
+                    best_non_team_score = score
+                    best_non_team_type = type
 
-        # number of guessable words
-        guessable_words = [w for w in team_words if w[1] < SIMILARITY_THRESHOLD]
-        if len(guessable_words) == 0 or first_non_team_word is None:
-            return Hint(word, 0, 0, 0, [])
+        # find team words that fit within the similarity and distinctness threshold
+        # given the bes non-team score
+        hint_words = []
+        worst_team_score = 0
+        for w, type, score in team_scores:
+            if best_non_team_score - score > DISTINCTNESS_THRESHOLD and score < SIMILARITY_THRESHOLD:
+                hint_words.append((w, score))
+                if score > worst_team_score:
+                    worst_team_score = score
 
-        # the number to give and how distinct the clue is from other words on the board
-        num = len(guessable_words)
-        distinctness = first_non_team_word[1] - guessable_words[-1][1]
+        num = len(hint_words)
+        if num == 0:
+            return Hint(word)
 
-        # penalty to distinctness depending on type
-        if first_non_team_type == 'assassin':
-            distinctness -= 0.2
-        elif first_non_team_type != 'neutral':
-            distinctness -= 0.1
+        # too close it's probably cheating
+        if worst_team_score < TOO_SIMILAR_THRESHOLD:
+            return Hint(word)
 
-        similarity = np.mean([w[1] for w in guessable_words])
-
-        return Hint(word, num, similarity, distinctness, [t[0] + ' (' + str(t[1]) + ')' for t in guessable_words])
+        explanation = [t[0] + ' (' + str(t[1]) + ')' for t in hint_words]
+        return Hint(word, num, worst_team_score, best_non_team_score - worst_team_score, best_non_team_type, explanation)
 
     def board_similarity(self, word, board):
         return [(w, board.word_type(w), self.word_similarity(word, w)) for w in board.remaining_words()]
