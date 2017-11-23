@@ -20,7 +20,7 @@ shift
 if [[ $COMMAND == 's' || $COMMAND == 'start' ]]; then
 	echo "loading in production mode..."
 	source activate codenames
-	nohup gunicorn server:app --preload -b unix:/tmp/gunicorn.sock -w 4 $@ &> server.log &
+	nohup gunicorn server:app --preload -t 500 -b unix:/tmp/gunicorn.sock -w 4 $@ &> server.log &
 
 elif [[ $COMMAND == 'd' || $COMMAND == 'develop' ]]; then
 	echo "loading in dev mode..."

@@ -67,7 +67,7 @@ class CodeGiverAI:
         hints = self.score_hints(board)
         best_hint = hints[0]
         if self.debug:
-            for i in range(20):
+            for i in range(min(20, len(hints)-1)):
                 print str(hints[i]) + ' FINAL: ' + str(self.evaluate_hint(hints[i]))
         self.history.add(best_hint.word)
         return best_hint.word, best_hint.num
