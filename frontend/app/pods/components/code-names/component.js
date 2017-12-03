@@ -40,11 +40,11 @@ export default Component.extend({
 			this.get('history').pushObject(hint.word);
 			this.set('guesses', parseInt(hint.num) + 1);
 			if (this.get('difficulty') === 'easy') {
-				this.set('quality', 2);
+				this.set('quality', 200);
 			} else if (this.get('difficulty') === 'hard') {
-				this.set('quality', 3);
-			} else {
 				this.set('quality', 100);
+			} else {
+				this.set('quality', 0);
 			}
 			return hint;
 		});

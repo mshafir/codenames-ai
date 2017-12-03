@@ -6,10 +6,10 @@ from collections import defaultdict
 
 # aka. fathomability
 SIMILARITY_THRESHOLD = 0.68
-TOO_SIMILAR_THRESHOLD = 0.4
+TOO_SIMILAR_THRESHOLD = 0.45
 DISTINCTNESS_THRESHOLD = 0.07
-COUNT_MIN_THRESHOLD = 8000000
-COUNT_MAX_THRESHOLD = 50000000
+COUNT_MIN_THRESHOLD = 2000000
+COUNT_MAX_THRESHOLD = 80000000
 
 
 def legal_word(w, words):
@@ -75,13 +75,14 @@ class CodeGiverAI:
     def evaluate_hint(self, hint):
         penalty = 0
         if hint.first_non_team_type == 'assassin':
-            penalty = 0.2
+            penalty = 0.3
         elif hint.first_non_team_type != 'neutral':
-            penalty = 0.1
-        return hint.num + hint.distinctness - hint.similarity - penalty
+            penalty = 0.2
+        return hint.num + hint.distinctness * 4 - hint.similarity - penalty
 
     def good_word(self, word, board):
-        return (self.counts[word] < COUNT_MIN_THRESHOLD or self.counts[word] > COUNT_MAX_THRESHOLD
+        return (self.counts[word] > COUNT_MIN_THRESHOLD
+            and self.counts[word] < COUNT_MAX_THRESHOLD
             and legal_word(word, board.words)
             and not word in self.history
             and word in self.distances)

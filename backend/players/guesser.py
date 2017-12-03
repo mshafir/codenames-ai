@@ -19,13 +19,17 @@ class GuesserAI:
         self.distances = distances
         self.debug = debug
 
+    def add_confusion(self, score, quality):
+        """Adds random confusion to a similarity score for quality of 0 to 100"""
+        random_shift = quality * BASE_SCORE_SHIFT * (1.0 / score)
+        return score + random.uniform(-random_shift, random_shift)
+
     def guess(self, clue, board, tries_left, quality=100):
         # realistic delay
         time.sleep(1)
         if tries_left == 1:
             return 'pass'
-        random_shift = (100.0 - quality) * BASE_SCORE_SHIFT
-        board_scores = [(w, self.word_similarity(clue, w) + random.uniform(-random_shift, random_shift)) for w in board.remaining_words()]
+        board_scores = [(w, self.add_confusion(self.word_similarity(clue, w), quality)) for w in board.remaining_words()]
         random.shuffle(board_scores)
         best = sorted(board_scores, key=lambda x: x[1])
         if self.debug:

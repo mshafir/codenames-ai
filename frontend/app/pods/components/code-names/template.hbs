@@ -63,7 +63,12 @@
 
 						<div class="game-label">{{guesses}} guesses left</div>
 						<div class="game-hint">{{hintWord}} for {{hintNum}}</div>
-						<div class="game-instructions">select a card to guess it or <button class="small" {{action "pass"}}>pass</button></div>
+						<div class="game-instructions">
+							{{#unless (eq mode 'ai')}}
+								select a card to guess it or
+								<button class="small" {{action "pass"}}>pass</button>
+							{{/unless}}
+						</div>
 
 					{{/if}}
 
