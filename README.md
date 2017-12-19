@@ -3,6 +3,8 @@
 An interactive command-line game of codenames, with an AI implementation
 that can play as a code giver or guesser.
 
+You can see it in action at http://personal.mshafir.com/codenames/ though my AWS instance is a tiny so it'll be slow and might run out of memory.
+
 ## Requirements
 
 ### Vectors
